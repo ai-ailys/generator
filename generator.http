@@ -1,0 +1,5 @@
+###
+GET http://localhost:8080/api/v1/currency_pairs?name=USD/RUB
+
+###
+GET http://localhost:8080/api/v1/currency_pairs?name=EUR/USD

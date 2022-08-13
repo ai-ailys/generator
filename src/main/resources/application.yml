@@ -1,0 +1,17 @@
+application:
+  pairs:
+    -
+      name: EUR/USD
+      value: 1.0241
+      a: 50 # func = value + value/a * random(-1, 1)
+    -
+      name: USD/RUB
+      value: 60.5126
+      a: 100
+
+server:
+  port: 8081
+
+spring:
+  devtools:
+    add-properties: false
