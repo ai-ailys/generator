@@ -1,0 +1,587 @@
+openapi: 3.0.2
+info:
+  title: currency_pairs
+  version: 1.0.0
+  description: API Specification
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    name: Ailys
+    url: 'http://localhost:8080'
+    email: error0x07@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /currency_pairs:
+    servers:
+      - url: 'http://localhost:8081/api/v1'
+        description: Generator Service
+    get:
+      parameters:
+        -
+          examples:
+            EUR/USD:
+              value: EUR/USD
+            USD/RUB:
+              value: USD/RUB
+          name: name
+          description: Название валютной пары
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrencyPair'
+              examples:
+                USD/RUB:
+                  value:
+                    -
+                      name: USD/RUB
+                      value: 61.070519012755994
+                      time: '00:20:21'
+                    -
+                      name: USD/RUB
+                      value: 59.82441688036293
+                      time: '00:20:31'
+          description: Возвращает список цен от времени по названию валютной пары
+      summary: Return list of 100 generated values by name
+      description: >-
+        Сервис генерирует и хранит в памяти по 100 значений каждой валютной пары, указанной в
+        конфигурации.
+        
+        Метод возвращает список значений по названию валютной пары.
+  /statistics:
+    servers:
+      -
+        url: 'http://localhost:8082/api/v1'
+        description: Statictics service
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapOHLC'
+              examples:
+                Example:
+                  value: |-
+                    {
+                        "EUR/USD": {
+                            "1": {
+                                "00:24:00": {
+                                    "LOW": 1.001028259488184,
+                                    "OPEN": 1.023106847694458,
+                                    "HIGH": 1.0427788371954831,
+                                    "CLOSE": 1.0227907828481404
+                                },
+                                "00:25:00": {
+                                    "LOW": 1.0004538580777553,
+                                    "OPEN": 1.0227907828481404,
+                                    "HIGH": 1.0411035010543053,
+                                    "CLOSE": 1.0245312698974904
+                                },
+                            "5": {
+                                "00:20:00": {
+                                    "LOW": 1.001028259488184,
+                                    "OPEN": 1.023106847694458,
+                                    "HIGH": 1.0427788371954831,
+                                    "CLOSE": 1.0227907828481404
+                                },
+                                "00:25:00": {
+                                    "LOW": 0.9725468730847334,
+                                    "OPEN": 1.0227907828481404,
+                                    "HIGH": 1.0536882882817438,
+                                    "CLOSE": 1.031161608753586
+                                }
+                            }
+                        },
+                        "USD/RUB": {
+                            "1": {
+                                "00:24:00": {
+                                    "LOW": 1.001028259488184,
+                                    "OPEN": 1.023106847694458,
+                                    "HIGH": 1.0427788371954831,
+                                    "CLOSE": 1.0227907828481404
+                                },
+                                "00:25:00": {
+                                    "LOW": 1.0004538580777553,
+                                    "OPEN": 1.0227907828481404,
+                                    "HIGH": 1.0411035010543053,
+                                    "CLOSE": 1.0245312698974904
+                                },
+                            "5": {
+                                "00:20:00": {
+                                    "LOW": 1.001028259488184,
+                                    "OPEN": 1.023106847694458,
+                                    "HIGH": 1.0427788371954831,
+                                    "CLOSE": 1.0227907828481404
+                                },
+                                "00:25:00": {
+                                    "LOW": 0.9725468730847334,
+                                    "OPEN": 1.0227907828481404,
+                                    "HIGH": 1.0536882882817438,
+                                    "CLOSE": 1.031161608753586
+                                }
+                            }
+                        }
+                    }
+          description: Возвращает значения OHLC по всем валютным парам и таймфреймам
+      summary: OHLC by all name and all timeframe
+      description: Возвращает значения OHLC по всем валютным парам и таймфреймам
+  /guide:
+    servers:
+      -
+        url: 'http://localhost:8080/api/v1'
+        description: History service
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GuideInfo'
+              examples:
+                Example:
+                  value:
+                    -
+                      id: 1
+                      name: EUR/USD
+                      basic: EUR
+                      quote: USD
+                      basicCountry: Europe
+                      quoteCountry: USA
+                      isMajor: true
+                    -
+                      id: 2
+                      name: USD/RUB
+                      basic: USD
+                      quote: RUB
+                      basicCountry: USA
+                      quoteCountry: Russia
+                      isMajor: false
+          description: Возвращает всю информацию из справочника валютных пар
+      summary: Currency Pairs Guide
+      description: Справочник по валютным парам
+  /statistics/findBy:
+    servers:
+      - url: 'http://localhost:8082/api/v1'
+        description: Statistics service
+    get:
+      parameters:
+        -
+          examples:
+            EUR/USD:
+              value: EUR/USD
+            USD/RUB:
+              value: USD/RUB
+          name: name
+          description: ''
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          examples:
+            1 minute:
+              value: '1'
+            5 min:
+              value: '5'
+            15 min:
+              value: '15'
+            30 min:
+              value: '30'
+            1 h:
+              value: '60'
+          name: timeframe
+          description: ''
+          schema:
+            type: integer
+          in: query
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MapByName'
+              examples:
+                15 min:
+                  value:
+                    '15':
+                      '00:15:00':
+                        HIGH: 61.86151620666089
+                        OPEN: 59.90295657891827
+                        LOW: 59.572028974506
+                        CLOSE: 60.53783799357494
+                      '00:30:00':
+                        HIGH: 62.080996544179655
+                        OPEN: 60.53783799357494
+                        LOW: 58.985514619433545
+                        CLOSE: 60.781762677018286
+                      '00:45:00':
+                        HIGH: 62.08535706712402
+                        OPEN: 60.78132860689078
+                        LOW: 58.820245958746845
+                        CLOSE: 60.52362361702355
+          description: >-
+            Возвращает значения OHLC по указанной валютной паре и таймфрейму (если не указан, то
+            по всем таймфремам)
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                timeframe = 10:
+                  value:
+                    timestamp: '2022-08-15T13:42:21.988+00:00'
+                    status: 404
+                    error: Not Found
+                    message: Timeframe Not Found
+                    path: /api/v1/statistics/findBy
+          description: 'Сообщение с ошибкой, если имя или таймфрейм не найдены'
+      summary: OHLC by name and timeframe
+      description: >-
+        Возвращает значения OHLC по указанной валютной паре и таймфрейму (если не указан, то по всем
+        таймфремам)
+  /history/findAllBy:
+    servers:
+      - url: 'http://localhost:8080/api/v1'
+        description: History service
+    get:
+      parameters:
+        -
+          examples:
+            EUR/USD:
+              value: EUR/USD
+            USD/RUB:
+              value: USD/RUB
+          name: name
+          description: Название валютной пары
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          examples:
+            '00:00:00':
+              value: '00:00:00'
+            '17:50:23':
+              value: '17:50:23'
+          name: startTime
+          description: время старта
+          schema:
+            type: string
+          in: query
+          required: true
+        -
+          examples:
+            '23:59:59':
+              value: '23:59:59'
+            '21:02:45':
+              value: '21:02:45'
+          name: endTime
+          description: время окончания
+          schema:
+            type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyInfo'
+              examples:
+                USD/RUB:
+                  value:
+                    -
+                      id: 3780
+                      name: USD/RUB
+                      value: 59.90295657891827
+                      time: '00:24:10'
+                      date: '2022-08-15'
+                    -
+                      id: 3781
+                      name: USD/RUB
+                      value: 60.14769960287488
+                      time: '00:24:20'
+                      date: '2022-08-15'
+                    -
+                      id: 3782
+                      name: USD/RUB
+                      value: 61.00959739632252
+                      time: '00:24:30'
+                      date: '2022-08-15'
+          description: >-
+            Возвращает список цен от времени по названию валютной пары в указанном временном
+            диапазоне
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+          description: Не найдено название валютной пары
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Example:
+                  value:
+                    timestamp: '2022-08-14T23:11:23.546+00:00'
+                    status: 500
+                    error: Internal Server Error
+                    message: Uncorrected time format
+                    path: /api/v1/history/findAllBy
+          description: Неправильный формат времени
+      summary: List of values by name and in time range
+      description: Возращает список цен от времени по названию валютной пары и в указанном временном интервале
+components:
+  schemas:
+    CurrencyPair:
+      title: Root Type for CurrencyPair
+      description: ''
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          format: double
+          type: number
+        time:
+          type: string
+      example:
+        name: USD/RUB
+        value: 61.070519012755994
+        time: '00:20:21'
+    historyInfo:
+      title: Root Type for historyInfo
+      description: ''
+      type: object
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+        value:
+          format: double
+          type: number
+        time:
+          type: string
+        date:
+          format: date
+          type: string
+      example:
+        id: 3780
+        name: USD/RUB
+        value: 59.90295657891827
+        time: '00:24:10'
+        date: '2022-08-15'
+    ErrorMessage:
+      title: Root Type for ErrorMessage
+      description: ''
+      type: object
+      properties:
+        timestamp:
+          format: date-time
+          type: string
+        status:
+          format: int32
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        timestamp: '2022-08-14T23:11:23.546+00:00'
+        status: 500
+        error: Internal Server Error
+        message: Uncorrected time format
+        path: /api/v1/history/findAllBy
+    GuideInfo:
+      title: Root Type for GuideInfo
+      description: ''
+      type: object
+      properties:
+        id:
+          format: int32
+          type: integer
+        name:
+          type: string
+        basic:
+          type: string
+        quote:
+          type: string
+        basicCountry:
+          type: string
+        quoteCountry:
+          type: string
+        isMajor:
+          type: boolean
+      example:
+        id: 1
+        name: EUR/USD
+        basic: EUR
+        quote: USD
+        basicCountry: Europe
+        quoteCountry: USA
+        isMajor: true
+    OHLC:
+      title: Root Type for OHLC
+      description: ''
+      type: object
+      properties:
+        LOW:
+          format: double
+          type: number
+        OPEN:
+          format: double
+          type: number
+        HIGH:
+          format: double
+          type: number
+        CLOSE:
+          format: double
+          type: number
+      example:
+        LOW: 59.572028974506
+        OPEN: 59.90295657891827
+        HIGH: 61.86151620666089
+        CLOSE: 60.53783799357494
+    MapByName:
+      title: Root Type for MapByName
+      description: ''
+      type: object
+      properties:
+        timeframe:
+          $ref: '#/components/schemas/MapByTimeframe'
+      example:
+        '1':
+          '00:24:00':
+            LOW: 1.001028259488184
+            OPEN: 1.023106847694458
+            HIGH: 1.0427788371954831
+            CLOSE: 1.0227907828481404
+          '00:25:00':
+            LOW: 1.0004538580777553
+            OPEN: 1.0227907828481404
+            HIGH: 1.0411035010543053
+            CLOSE: 1.0245312698974904
+          '00:26:00':
+            LOW: 0.9725468730847334
+            OPEN: 1.0245312698974904
+            HIGH: 1.034459685171867
+            CLOSE: 0.9725468730847334
+    MapByTimeframe:
+      description: ''
+      required:
+        - time
+      type: object
+      properties:
+        time:
+          $ref: '#/components/schemas/OHLC'
+      example:
+        '00:24:00':
+          LOW: 1.001028259488184
+          OPEN: 1.023106847694458
+          HIGH: 1.0427788371954831
+          CLOSE: 1.0227907828481404
+        '00:25:00':
+          LOW: 1.0004538580777553
+          OPEN: 1.0227907828481404
+          HIGH: 1.0411035010543053
+          CLOSE: 1.0245312698974904
+        '00:26:00':
+          LOW: 0.9725468730847334
+          OPEN: 1.0245312698974904
+          HIGH: 1.034459685171867
+          CLOSE: 0.9725468730847334
+    MapOHLC:
+      description: ''
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/MapByName'
+      example:
+        EUR/USD:
+          '1':
+            '00:24:00':
+              LOW: 1.001028259488184
+              OPEN: 1.023106847694458
+              HIGH: 1.0427788371954831
+              CLOSE: 1.0227907828481404
+            '00:25:00':
+              LOW: 1.0004538580777553
+              OPEN: 1.0227907828481404
+              HIGH: 1.0411035010543053
+              CLOSE: 1.0245312698974904
+            '00:26:00':
+              LOW: 0.9725468730847334
+              OPEN: 1.0245312698974904
+              HIGH: 1.034459685171867
+              CLOSE: 0.9725468730847334
+          '5':
+            '00:24:00':
+              LOW: 1.001028259488184
+              OPEN: 1.023106847694458
+              HIGH: 1.0427788371954831
+              CLOSE: 1.0227907828481404
+            '00:25:00':
+              LOW: 1.0004538580777553
+              OPEN: 1.0227907828481404
+              HIGH: 1.0411035010543053
+              CLOSE: 1.0245312698974904
+            '00:26:00':
+              LOW: 0.9725468730847334
+              OPEN: 1.0245312698974904
+              HIGH: 1.034459685171867
+              CLOSE: 0.9725468730847334
+        USD/RUB:
+          '1':
+            '00:24:00':
+              LOW: 1.001028259488184
+              OPEN: 1.023106847694458
+              HIGH: 1.0427788371954831
+              CLOSE: 1.0227907828481404
+            '00:25:00':
+              LOW: 1.0004538580777553
+              OPEN: 1.0227907828481404
+              HIGH: 1.0411035010543053
+              CLOSE: 1.0245312698974904
+            '00:26:00':
+              LOW: 0.9725468730847334
+              OPEN: 1.0245312698974904
+              HIGH: 1.034459685171867
+              CLOSE: 0.9725468730847334
+          '5':
+            '00:24:00':
+              LOW: 1.001028259488184
+              OPEN: 1.023106847694458
+              HIGH: 1.0427788371954831
+              CLOSE: 1.0227907828481404
+            '00:25:00':
+              LOW: 1.0004538580777553
+              OPEN: 1.0227907828481404
+              HIGH: 1.0411035010543053
+              CLOSE: 1.0245312698974904
+            '00:26:00':
+              LOW: 0.9725468730847334
+              OPEN: 1.0245312698974904
+              HIGH: 1.034459685171867
+              CLOSE: 0.9725468730847334

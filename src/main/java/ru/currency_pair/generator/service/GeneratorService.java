@@ -19,28 +19,29 @@ public class GeneratorService {
     @Autowired
     CurrencyPairMapper mapper;
 
-    private List<CurrencyPair> pairs;
-    private Map<String, List> allPairs = new HashMap<>();
+    private final Map<String, List<CurrencyPair>> allPairs = new HashMap<>();
 
     @Scheduled(fixedDelayString = "PT010S")
     public void hundredValues(){
+
         int index = 0;
+        List<CurrencyPair> pairs;
+
         while(index < config.getPairs().size()){
-            allPairs.computeIfAbsent(config.getPairs().get(index).getName(), k -> new LinkedList());
+
+            allPairs.computeIfAbsent(config.getPairs().get(index).getName(), k -> new LinkedList<>());
 
             pairs = allPairs.get(config.getPairs().get(index).getName());
 
             CurrencyPair pair = mapper.toCurrencyPair(config, index);
+
             if (pairs.size() >= 100) {
                 pairs.remove(0);
             }
             pairs.add(pair);
             allPairs.put(config.getPairs().get(index).getName(), pairs);
-            //System.out.println(pairs.size());
-
             index++;
         }
-        //System.out.println(allPairs);
     }
 
 }

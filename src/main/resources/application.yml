@@ -10,7 +10,11 @@ application:
       a: 100
 
 server:
+  error:
+    include-message: always
+    include-stacktrace: never
   port: 8081
+
 
 spring:
   devtools:
